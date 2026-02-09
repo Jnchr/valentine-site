@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For Bubby 💛</title>
+  <style>
+    :root{
+      --blue:#BFE6FF;
+      --blue2:#9FD6FF;
+      --yellow:#FFE9A6;
+      --yellow2:#FFD56A;
+      --ink:#243244;
+      --muted:#5B6B7F;
+      --card: rgba(255,255,255,.75);
+      --card2: rgba(255,255,255,.9);
+      --shadow: 0 16px 40px rgba(36,50,68,.12);
+      --radius: 22px;
+      --danger:#ff4d4d;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--ink);
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(255,233,166,.9), transparent 60%),
+        radial-gradient(900px 600px at 80% 30%, rgba(191,230,255,.95), transparent 60%),
+        radial-gradient(900px 600px at 40% 90%, rgba(255,213,106,.55), transparent 55%),
+        linear-gradient(180deg, #F6FBFF, #FFF9E7);
+      min-height:100vh;
+      overflow-x:hidden;
+    }
+
+    /* floating garden blobs */
+    .blob{
+      position:fixed;
+      inset:auto;
+      width:180px;height:180px;
+      border-radius:999px;
+      opacity:.35;
+      z-index:0;
+      animation: floaty 8s ease-in-out infinite;
+      pointer-events:none;
+    }
+    .blob.b1{left:-40px; top:90px; background:var(--blue)}
+    .blob.b2{right:-60px; top:220px; background:var(--yellow)}
+    .blob.b3{left:30%; bottom:-70px; background:rgba(191,230,255,.9); width:240px;height:240px; animation-duration:10s}
+    @keyframes floaty{
+      0%,100%{transform:translateY(0) translateX(0) scale(1)}
+      50%{transform:translateY(-18px) translateX(10px) scale(1.02)}
+    }
+
+    .wrap{
+      position:relative;
+      z-index:1;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 18px 16px 120px;
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 10px 6px 0;
+    }
+    .badge{
+      font-size:12px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,.7);
+      border:1px solid rgba(36,50,68,.08);
+      box-shadow: 0 8px 18px rgba(36,50,68,.06);
+      color:var(--muted);
+      white-space:nowrap;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid rgba(36,50,68,.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(8px);
+      padding: 18px;
+    }
+
+    .stage{
+      margin-top: 14px;
+      display:grid;
+      gap:14px;
+    }
+
+    .slide{
+      display:none;
+      transform: translateY(6px);
+      opacity:0;
+      transition: .35s ease;
+    }
+    .slide.active{
+      display:block;
+      transform: translateY(0);
+      opacity:1;
+    }
+
+    h1,h2{
+      margin:0 0 8px;
+      letter-spacing:-.02em;
+      line-height:1.08;
+    }
+    h1{font-size: 30px}
+    h2{font-size: 24px}
+    p{margin:0 0 12px; color:var(--muted); line-height:1.5}
+    .big{
+      font-size: 18px;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+
+    .btnrow{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px}
+    button{
+      appearance:none;
+      border:none;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-weight: 650;
+      font-size: 15px;
+      cursor:pointer;
+      transition:.15s ease;
+      box-shadow: 0 10px 22px rgba(36,50,68,.12);
+    }
+    button:active{transform: translateY(1px) scale(.99)}
+    .primary{
+      background: linear-gradient(180deg, var(--yellow), #fff);
+      border:1px solid rgba(36,50,68,.08);
+      color: var(--ink);
+    }
+    .secondary{
+      background: rgba(255,255,255,.85);
+      border:1px solid rgba(36,50,68,.10);
+      color: var(--ink);
+    }
+    .danger{
+      background: rgba(255,255,255,.86);
+      border: 2px solid transparent;
+      color: var(--ink);
+    }
+    .danger.wrong{
+      border-color: var(--danger);
+      box-shadow: 0 0 0 6px rgba(255,77,77,.14);
+    }
+
+    .shake{
+      animation: shake .35s ease;
+    }
+    @keyframes shake{
+      0%,100%{transform:translateX(0)}
+      20%{transform:translateX(-8px)}
+      40%{transform:translateX(8px)}
+      60%{transform:translateX(-6px)}
+      80%{transform:translateX(6px)}
+    }
+
+    /* password gate overlay */
+    .gate{
+      position:fixed;
+      inset:0;
+      z-index: 50;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 18px;
+      background:
+        radial-gradient(900px 600px at 20% 10%, rgba(255,233,166,.92), transparent 60%),
+        radial-gradient(900px 600px at 80% 30%, rgba(191,230,255,.96), transparent 60%),
+        linear-gradient(180deg, rgba(246,251,255,.92), rgba(255,249,231,.92));
+      backdrop-filter: blur(6px);
+    }
+    .gate.hidden{display:none}
+    .gate .card{max-width:520px; width:100%;}
+    .field{
+      display:flex; gap:10px; margin-top:10px;
+    }
+    input{
+      width:100%;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border:1px solid rgba(36,50,68,.14);
+      outline:none;
+      font-size:15px;
+      background: rgba(255,255,255,.9);
+    }
+    .hint{
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    /* outfit cards */
+    .options{
+      display:grid;
+      gap:12px;
+      margin-top: 10px;
+    }
+    .opt{
+      background: var(--card2);
+      border: 2px solid rgba(36,50,68,.10);
+      border-radius: 18px;
+      padding: 14px;
+      cursor:pointer;
+      transition: .15s ease;
+      box-shadow: 0 10px 22px rgba(36,50,68,.08);
+    }
+    .opt:hover{transform: translateY(-1px)}
+    .opt.selected{
+      border-color: rgba(36,50,68,.26);
+      box-shadow: 0 0 0 6px rgba(191,230,255,.22), 0 16px 30px rgba(36,50,68,.10);
+    }
+    .opt h3{margin:0 0 6px; font-size: 16px}
+    .opt .sub{margin:0; font-size: 13px; color:var(--muted)}
+
+    /* treasure map timeline */
+    .map{
+      margin-top: 12px;
+      background: rgba(255,255,255,.7);
+      border:1px solid rgba(36,50,68,.08);
+      border-radius: 18px;
+      padding: 14px;
+    }
+    .path{
+      position:relative;
+      padding-left: 10px;
+      display:grid;
+      gap: 14px;
+    }
+    .path:before{
+      content:"";
+      position:absolute;
+      left: 17px;
+      top: 10px;
+      bottom: 10px;
+      width: 3px;
+      border-radius: 999px;
+      background: linear-gradient(180deg, rgba(191,230,255,.9), rgba(255,233,166,.9));
+    }
+    .stop{
+      display:grid;
+      grid-template-columns: 38px 1fr;
+      gap: 10px;
+      align-items:start;
+      position:relative;
+    }
+    .pin{
+      width: 34px; height: 34px;
+      border-radius: 12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size: 16px;
+      background: rgba(255,233,166,.9);
+      border:1px solid rgba(36,50,68,.10);
+      box-shadow: 0 10px 18px rgba(36,50,68,.08);
+      margin-left: 2px;
+    }
+    .stop h4{margin:0 0 2px; font-size: 15px}
+    .stop p{margin:0; font-size: 13px}
+
+    .scrollNote{
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    /* celebration overlay */
+    .celebrate{
+      position:fixed;
+      inset:0;
+      z-index: 60;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      background: rgba(246,251,255,.70);
+      backdrop-filter: blur(6px);
+    }
+    .celebrate.show{display:flex}
+    .celebrate .card{max-width: 520px; width:100%; text-align:center}
+    .confetti{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index: 59;
+      display:none;
+    }
+    .confetti.show{display:block}
+    .confetti i{
+      position:absolute;
+      top:-20px;
+      width:10px;height:14px;
+      border-radius: 3px;
+      opacity:.85;
+      animation: fall 1.9s linear infinite;
+      background: rgba(255,213,106,.95);
+      box-shadow: 0 0 0 2px rgba(191,230,255,.30) inset;
+    }
+    @keyframes fall{
+      to{transform: translateY(calc(100vh + 40px)) rotate(180deg)}
+    }
+
+    /* Pixel calico cat (bigger sprite and clearer silhouette) */
+    .pixel-wrap{
+      display:flex;
+      justify-content:center;
+      margin: 12px 0 6px;
+    }
+    .pixel-cat{
+      --px: 9px;
+      width: calc(var(--px) * 20);
+      height: calc(var(--px) * 16);
+      image-rendering: pixelated;
+      position:relative;
+      transform-origin: 50% 80%;
+      animation: dance .55s ease-in-out infinite;
+      filter: drop-shadow(0 14px 18px rgba(36,50,68,.18));
+    }
+    @keyframes dance{
+      0%,100%{transform: translateY(0) rotate(-2deg)}
+      50%{transform: translateY(-6px) rotate(2deg)}
+    }
+    .px{
+      position:absolute;
+      width: var(--px);
+      height: var(--px);
+      background: transparent;
+    }
+
+    .audioPill{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .tiny{
+      font-size:12px;
+      color:var(--muted);
+      margin:0;
+    }
+    .audioBtn{
+      padding:10px 12px;
+      border-radius: 14px;
+    }
+
+    .progress{
+      position:fixed;
+      left:0; right:0; bottom:0;
+      z-index: 10;
+      padding: 10px 14px;
+      background: rgba(255,255,255,.72);
+      border-top: 1px solid rgba(36,50,68,.08);
+      backdrop-filter: blur(10px);
+    }
+    .bar{
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(36,50,68,.08);
+      overflow:hidden;
+    }
+    .bar > div{
+      height:100%;
+      width:0%;
+      border-radius:999px;
+      background: linear-gradient(90deg, rgba(191,230,255,.95), rgba(255,233,166,.95));
+      transition: width .35s ease;
+    }
+    .ptext{
+      margin: 0 0 8px;
+      font-size: 12px;
+      color: var(--muted);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+
+  <div class="confetti" id="confetti"></div>
+
+  <div class="celebrate" id="celebrate">
+    <div class="card">
+      <h2>YAYYYYY 💛</h2>
+      <p class="big">Bubby said YES.</p>
+
+      <div class="pixel-wrap">
+        <div class="pixel-cat" aria-label="dancing pixel calico cat" id="pixelCat"></div>
+      </div>
+
+      <p>Kamingo is very happy hehe</p>
+      <div class="btnrow" style="justify-content:center">
+        <button class="primary" id="celebrateContinue">Continue</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="gate" id="gate">
+    <div class="card">
+      <h2>Hi Bubby 💛</h2>
+      <p>Before you enter… one tiny password.</p>
+      <div class="field">
+        <input id="pw" type="password" placeholder="Enter password" autocomplete="off"/>
+        <button class="primary" id="unlock">Unlock</button>
+      </div>
+      <p class="hint">Hint: the name of our first baby 🐱</p>
+      <p class="tiny" id="pwErr" style="display:none; color:var(--danger); margin-top:10px;">Wrong password 😤 try again</p>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <header>
+      <div class="badge">Pastel garden mode: ON 🌼</div>
+      <div class="audioPill">
+        <button class="secondary audioBtn" id="audioToggle">Play music</button>
+      </div>
+    </header>
+
+    <main class="stage">
+      <section class="card slide active" data-step="1">
+        <h1>Hi Bubby 💛</h1>
+        <p class="big">I made something for you.</p>
+        <p>Just press next. It’s short, cute, and important.</p>
+        <div class="btnrow">
+          <button class="primary next">Next</button>
+        </div>
+      </section>
+
+      <section class="card slide" data-step="2">
+        <h1>Will you be my Valentine’s Date?</h1>
+        <p>Choose wisely 😌</p>
+        <div class="btnrow">
+          <button class="primary" id="yesBtn">Yes 💛</button>
+          <button class="danger" id="noBtn">No</button>
+        </div>
+        <p class="tiny" id="noHint" style="display:none; margin-top:10px;">wrong answer 😤 try again</p>
+      </section>
+
+      <section class="card slide" data-step="3">
+        <h2>Save the date 🌼</h2>
+        <p class="big"><strong>February 16</strong></p>
+        <p><strong>10:00 AM – 10:00 PM</strong></p>
+        <p>Yes, you're booked. Just stay pretty and be ready.</p>
+        <div class="btnrow">
+          <button class="primary next">Next</button>
+        </div>
+      </section>
+
+      <section class="card slide" data-step="4">
+        <h2>Dress code</h2>
+        <p class="big">You’ll be wearing the <strong>yellow dress</strong> we got 💛</p>
+        <p>I really love that dress on youu hehe can't wait! PS. Don't wear heels</p>
+        <div class="btnrow">
+          <button class="primary next">Next</button>
+        </div>
+      </section>
+
+      <section class="card slide" data-step="5">
+        <h2>Choose my outfit 👀</h2>
+        <p class="big">Pick one.</p>
+        <p class="tiny"><strong>You will get a preview</strong> of whatever you choose.</p>
+
+        <div class="options" id="outfitOptions">
+          <div class="opt" data-value="Option 1: cropped baggy polo (you got me) + white/beige baggy pants">
+            <h3>Option 1</h3>
+            <p class="sub">Cropped baggy polo you got me + white/beige baggy pants</p>
+          </div>
+          <div class="opt" data-value="Option 2: Ralph Lauren long sleeve polo + black pants">
+            <h3>Option 2</h3>
+            <p class="sub">Ralph Lauren long sleeve polo + black pants</p>
+          </div>
+        </div>
+
+        <div class="btnrow">
+          <button class="primary" id="outfitNext" disabled>Next</button>
+        </div>
+        <p class="scrollNote">After this, you can scroll like a story 📜</p>
+      </section>
+
+      <section class="card slide" data-step="6">
+        <h2>Mini details only 🤫</h2>
+        <p class="big">It’s a surprise… but its gonna be an adventure. A Galentines!</p>
+        <p>You just show up. I’ll do the rest.</p>
+        <div class="btnrow">
+          <button class="primary next">Next</button>
+        </div>
+      </section>
+
+      <section class="card slide" data-step="7">
+        <h2>What to bring</h2>
+        <p class="big">Just a few essentials:</p>
+        <ul style="margin:0; padding-left:18px; color:var(--muted); line-height:1.8">
+          <li>Fan</li>
+          <li>Phone</li>
+          <li>Hair clip or ribbon</li>
+          <li>Sparkling eyes</li>
+          <li>Beautiful and kissable smile</li>
+        </ul>
+        <div class="btnrow">
+          <button class="primary next">Next</button>
+        </div>
+      </section>
+
+      <section class="card slide" data-step="8" id="timelineSlide">
+        <h2>The Timeline</h2>
+        <p class="big">No spoilers. Just the journey.</p>
+
+        <div class="map">
+          <div class="path">
+            <div class="stop">
+              <div class="pin">✈️</div>
+              <div>
+                <h4>Taking you to another country</h4>
+                <p>jk</p>
+              </div>
+            </div>
+
+            <div class="stop">
+              <div class="pin">🥗</div>
+              <div>
+                <h4>Refreshing lunch</h4>
+                <p></p>
+              </div>
+            </div>
+
+            <div class="stop">
+              <div class="pin">🐾</div>
+              <div>
+                <h4>Be ready to meet some animals</h4>
+                <p></p>
+              </div>
+            </div>
+
+            <div class="stop">
+              <div class="pin">🌸</div>
+              <div>
+                <h4>Be one with the soil</h4>
+                <p></p>
+              </div>
+            </div>
+
+            <div class="stop">
+              <div class="pin">🍽️</div>
+              <div>
+                <h4>Dinner!</h4>
+                <p></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btnrow">
+          <button class="primary next">Next</button>
+        </div>
+      </section>
+
+      <section class="card slide" data-step="9">
+        <h2>So… it’s a date 💛</h2>
+        <p class="big">February 16. You + Me.</p>
+        <p>I can’t wait. I’m excited to be with you for the whole day.</p>
+
+        <div class="btnrow">
+          <button class="primary" id="sendBtn">I can’t wait 💛</button>
+        </div>
+
+        <p class="tiny" id="sentMsg" style="display:none; margin-top:10px;">
+          Sent to Ichiro ✅ (you can close this now)
+        </p>
+      </section>
+
+      <section class="card slide" data-step="10">
+        <h2>Done 💛</h2>
+        <p class="big">See you on February 16.</p>
+      </section>
+
+      <iframe name="hidden_iframe" style="display:none"></iframe>
+      <form id="resultForm" action="https://formsubmit.co/ichiroyamagishi232@gmail.com" method="POST" target="hidden_iframe" style="display:none">
+        <input type="hidden" name="_subject" value="Valentine site response 💛"/>
+        <input type="hidden" name="_template" value="table"/>
+        <input type="hidden" name="_captcha" value="false"/>
+        <input type="hidden" name="_replyto" value=""/>
+        <input type="hidden" name="Answer" id="fAnswer" value=""/>
+        <input type="hidden" name="Outfit Choice" id="fOutfit" value=""/>
+        <input type="hidden" name="Timestamp" id="fTime" value=""/>
+      </form>
+    </main>
+  </div>
+
+  <div class="progress">
+    <div class="ptext">
+      <span id="pLabel">Slide 1 of 9</span>
+      <span id="pMini">for Bubby 💛</span>
+    </div>
+    <div class="bar"><div id="pBar"></div></div>
+  </div>
+
+  <audio id="bgm" preload="auto" loop>
+    <source src="romantic.mp3" type="audio/mpeg"/>
+  </audio>
+
+  <script>
+    const PASSWORD = "chibub";
+
+    const $ = (q) => document.querySelector(q);
+    const $$ = (q) => Array.from(document.querySelectorAll(q));
+
+    const slides = $$(".slide");
+    const totalSteps = 9;
+    let step = 1;
+
+    let answer = "";
+    let outfitChoice = "";
+
+    function showStep(n){
+      step = Math.max(1, Math.min(totalSteps, n));
+      slides.forEach(s => s.classList.remove("active"));
+      const el = slides.find(s => Number(s.dataset.step) === step);
+      if(el) el.classList.add("active");
+
+      $("#pLabel").textContent = `Slide ${step} of ${totalSteps}`;
+      $("#pBar").style.width = `${((step-1)/(totalSteps-1))*100}%`;
+
+      if(el && el.id === "timelineSlide"){
+        setTimeout(() => el.scrollIntoView({behavior:"smooth", block:"start"}), 200);
+      } else {
+        window.scrollTo({top:0, behavior:"smooth"});
+      }
+    }
+
+    const gate = $("#gate");
+    const pw = $("#pw");
+    const unlock = $("#unlock");
+    const pwErr = $("#pwErr");
+
+    function unlockGate(){
+      const v = (pw.value || "").trim().toLowerCase();
+      if(v === PASSWORD){
+        sessionStorage.setItem("val_gate_ok","1");
+        gate.classList.add("hidden");
+      } else {
+        pwErr.style.display = "block";
+        const c = gate.querySelector(".card");
+        c.classList.remove("shake");
+        void c.offsetWidth;
+        c.classList.add("shake");
+      }
+    }
+
+    unlock.addEventListener("click", unlockGate);
+    pw.addEventListener("keydown", (e)=>{ if(e.key==="Enter") unlockGate(); });
+
+    if(sessionStorage.getItem("val_gate_ok")==="1"){
+      gate.classList.add("hidden");
+    }
+
+    const bgm = $("#bgm");
+    const audioToggle = $("#audioToggle");
+    let audioOn = false;
+
+    async function toggleAudio(){
+      try{
+        if(!audioOn){
+          await bgm.play();
+          audioOn = true;
+          audioToggle.textContent = "Pause music";
+        }else{
+          bgm.pause();
+          audioOn = false;
+          audioToggle.textContent = "Play music";
+        }
+      }catch(err){
+        alert("Music file not found. If you want music, add a file named romantic.mp3 beside index.html.");
+      }
+    }
+    audioToggle.addEventListener("click", toggleAudio);
+
+    $$(".next").forEach(btn=>{
+      btn.addEventListener("click", ()=> showStep(step+1));
+    });
+
+    const yesBtn = $("#yesBtn");
+    const noBtn = $("#noBtn");
+    const noHint = $("#noHint");
+
+    const celebrate = $("#celebrate");
+    const celebrateContinue = $("#celebrateContinue");
+    const confetti = $("#confetti");
+
+    function spawnConfetti(){
+      confetti.innerHTML = "";
+      const pieces = 70;
+      for(let i=0;i<pieces;i++){
+        const c = document.createElement("i");
+        const left = Math.random()*100;
+        const delay = Math.random()*1.2;
+        const dur = 1.2 + Math.random()*1.2;
+        c.style.left = left + "vw";
+        c.style.animationDelay = delay + "s";
+        c.style.animationDuration = dur + "s";
+        c.style.opacity = 0.55 + Math.random()*0.45;
+        if(i%3===0) c.style.background = "rgba(191,230,255,.95)";
+        if(i%3===1) c.style.background = "rgba(255,233,166,.95)";
+        if(i%3===2) c.style.background = "rgba(255,213,106,.95)";
+        confetti.appendChild(c);
+      }
+      confetti.classList.add("show");
+      setTimeout(()=> confetti.classList.remove("show"), 1800);
+    }
+
+    yesBtn.addEventListener("click", ()=>{
+      answer = "YES";
+      celebrate.classList.add("show");
+      spawnConfetti();
+    });
+
+    noBtn.addEventListener("click", ()=>{
+      answer = "NO";
+      noHint.style.display = "block";
+      noBtn.classList.add("wrong");
+      noBtn.classList.remove("shake");
+      void noBtn.offsetWidth;
+      noBtn.classList.add("shake");
+      setTimeout(()=> noBtn.classList.remove("wrong"), 900);
+    });
+
+    celebrateContinue.addEventListener("click", ()=>{
+      celebrate.classList.remove("show");
+      showStep(3);
+    });
+
+    const optEls = $$("#outfitOptions .opt");
+    const outfitNext = $("#outfitNext");
+
+    optEls.forEach(el=>{
+      el.addEventListener("click", ()=>{
+        optEls.forEach(o => o.classList.remove("selected"));
+        el.classList.add("selected");
+        outfitChoice = el.dataset.value;
+        outfitNext.disabled = false;
+      });
+    });
+
+    outfitNext.addEventListener("click", ()=>{
+      showStep(6);
+      setTimeout(()=> $("#timelineSlide").scrollIntoView({behavior:"smooth"}), 450);
+    });
+
+    const sendBtn = $("#sendBtn");
+    const sentMsg = $("#sentMsg");
+    const resultForm = $("#resultForm");
+
+    sendBtn.addEventListener("click", ()=>{
+      const ts = new Date().toLocaleString();
+      $("#fAnswer").value = answer || "YES (assumed)";
+      $("#fOutfit").value = outfitChoice || "No outfit selected";
+      $("#fTime").value = ts;
+      resultForm.submit();
+      sentMsg.style.display = "block";
+      setTimeout(()=> showStep(10), 900);
+    });
+
+    function px(cat, x, y, color){
+      const d = document.createElement("div");
+      d.className = "px";
+      d.style.left = `calc(var(--px) * ${x})`;
+      d.style.top  = `calc(var(--px) * ${y})`;
+      d.style.background = color;
+      cat.appendChild(d);
+    }
+
+    function buildPixelCat(){
+      const cat = $("#pixelCat");
+      cat.innerHTML = "";
+
+      const O = "#1f2a3a";
+      const C = "#ffe9c2";
+      const A = "#ffb25c";
+      const G = "#c9d1db";
+      const P = "#ff9db7";
+      const W = "#ffffff";
+
+      const headO = [
+        [4,2],[5,1],[6,1],[7,2],
+        [13,2],[12,1],[11,1],[10,2],
+        [7,3],[8,3],[9,3],[10,3],
+        [3,3],[3,4],[2,5],[2,6],[2,7],[3,8],[4,9],
+        [14,3],[14,4],[15,5],[15,6],[15,7],[14,8],[13,9],
+        [5,10],[6,10],[7,10],[8,10],[9,10],[10,10],[11,10],[12,10]
+      ];
+      headO.forEach(([x,y])=>px(cat,x,y,O));
+
+      for(let y=2;y<=9;y++){
+        for(let x=4;x<=13;x++){
+          if((y===2 && (x<=5 || x>=12)) ) continue;
+          if((y===3 && (x===4 || x===13)) ) continue;
+          px(cat,x,y,C);
+        }
+      }
+
+      [[6,2],[11,2]].forEach(([x,y])=>px(cat,x,y,P));
+
+      [[5,5],[6,5],[5,6],[6,6],[7,6]].forEach(([x,y])=>px(cat,x,y,A));
+      [[11,5],[12,5],[12,6],[11,6]].forEach(([x,y])=>px(cat,x,y,G));
+
+      px(cat,7,7,O); px(cat,11,7,O);
+      px(cat,6,8,P); px(cat,12,8,P);
+
+      px(cat,9,8,P);
+      px(cat,9,9,O);
+      px(cat,8,9,O);
+      px(cat,10,9,O);
+
+      [[4,8],[5,8],[4,9],[5,9]].forEach(([x,y])=>px(cat,x,y,O));
+      [[13,8],[12,8],[13,9],[12,9]].forEach(([x,y])=>px(cat,x,y,O));
+
+      const bodyO = [
+        [7,11],[8,11],[9,11],[10,11],[11,11],
+        [6,12],[12,12],
+        [5,13],[13,13],
+        [5,14],[13,14],
+        [6,15],[12,15],
+        [7,15],[8,15],[9,15],[10,15],[11,15]
+      ];
+      bodyO.forEach(([x,y])=>px(cat,x,y,O));
+
+      for(let y=12;y<=14;y++){
+        for(let x=6;x<=12;x++){
+          px(cat,x,y,W);
+        }
+      }
+
+      [[6,12],[7,12],[6,13]].forEach(([x,y])=>px(cat,x,y,A));
+      [[11,13],[12,13],[12,14]].forEach(([x,y])=>px(cat,x,y,G));
+
+      [[6,15],[12,15]].forEach(([x,y])=>px(cat,x,y,C));
+
+      [[14,12],[15,12],[16,13],[17,13],[18,14],[17,14],[16,14]].forEach(([x,y])=>px(cat,x,y,O));
+      [[15,13],[16,14],[17,14]].forEach(([x,y])=>px(cat,x,y,A));
+    }
+
+    buildPixelCat();
+    showStep(1);
+  </script>
+</body>
+</html>
